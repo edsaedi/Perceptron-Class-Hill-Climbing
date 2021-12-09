@@ -46,32 +46,94 @@ namespace Perceptron_Hill_Climbing_Class
 
         public double Compute(double[] inputs)
         {
-            double result = 0;
+            double result = bias;
             /*computes the output with given input*/
-            return result;
 
-            //Cannot do anything with this yet because it is project specific.
+            for (int i = 0; i <= inputs.Length - 1; i++)
+            {
+                result += (weights[i] * inputs[i]);
+            }
+
+            return result;
         }
 
         public double[] Compute(double[][] inputs)
         {
-            double[] result = null;
-            return result;
-            /*computes the output for each row of inputs*/ 
+            double[] result = new double[inputs.Length];
+            /*computes the output for each row of inputs*/
 
-            //Cannot do anything with this yet because it is project specific.
+            for (int i = 0; i <= result.Length - 1; i++)
+            {
+                result[i] = Compute(inputs[i]);
+            }
+
+            return result;
         }
 
         public double GetError(double[][] inputs, double[] desiredOutputs)
         {
-            double result = 0;
-            return result;
-            /*computes the output using the inputs returns the average error between each output row and each desired output row using errorFunc*/ 
+            double error = 0;
+            var outputs = Compute(inputs);
+
+            for (int i = 0; i < outputs.Length; i++)
+            {
+                error += errorFunc.Invoke(desiredOutputs[i], outputs[i]);
+            }
+
+            error /= outputs.Length;
+            return error;
+            /*computes the output using the inputs returns the average error between each output row and each desired output row using errorFunc*/
         }
+
+        // error = sum of (desired = actual)^2/n
+        //This is the code for MSE
+        //var top = Math.Pow((desiredOutputs[i] - outputs[i]), 2);
+        //result += (top / inputs.Length);
+
+
 
         public double TrainWithHillClimbing(double[][] inputs, double[] desiredOutputs, double currentError)
         {
-            return 0; 
+            // Randomly Mutate one weight
+            ///Random mutation begins:
+
+            double mutation = random.NextDouble(-mutationAmount, mutationAmount);
+            int index = random.Next(-1, weights.Length);
+            if (index == -1)
+            {
+                bias += mutation; //bias weight;
+            }
+            else
+            {
+                weights[index] += mutation;
+            }
+
+            ///Random mutation ends
+
+            // Calculate the new error of the data(just use "GetError" function explained below)
+
+            double newError = GetError(inputs, desiredOutputs);
+
+            // If the new error is better than the current error, update the current error, else undo the mutation.
+
+            if (newError <= currentError)
+            {
+                return newError;
+            }
+
+            else
+            {
+                if (index == -1)
+                {
+                    bias -= mutation;
+                }
+                else
+                {
+                    weights[index] -= mutation;
+                }
+            }
+
+            return 0;
         }
     }
 }
