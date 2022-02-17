@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Perceptron_Hill_Climbing_Class
 {
-    class Perceptron
+    public class Perceptron
     {
         double[] weights;
         double bias;
